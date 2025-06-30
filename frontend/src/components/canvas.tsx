@@ -31,6 +31,22 @@ const DefaultView = () => (
   </div>
 );
 
+// Add debug component
+const AgentDebugPanel = ({ agents }: { agents: Array<{ status: boolean; name: string; nodeName: string }> }) => (
+  <div className="absolute top-20 right-4 bg-black/80 text-white p-4 rounded-lg text-xs font-mono z-[9998] max-w-xs">
+    <div className="text-yellow-300 font-bold mb-2">🔍 Agent Status Debug</div>
+    {agents.map((agent, i) => (
+      <div key={i} className={`mb-1 ${agent.status ? 'text-green-300' : 'text-gray-400'}`}>
+        <span className={`inline-block w-2 h-2 rounded-full mr-2 ${agent.status ? 'bg-green-400 animate-pulse' : 'bg-gray-600'}`}></span>
+        {agent.name}: {agent.status ? `ACTIVE (${agent.nodeName})` : 'idle'}
+      </div>
+    ))}
+    <div className="text-blue-300 text-[10px] mt-2">
+      💡 Try: &ldquo;plan a trip&rdquo;, &ldquo;research AI&rdquo;, &ldquo;calculate 5+5&rdquo;
+    </div>
+  </div>
+);
+
 export default function Canvas() {
   const [showMCPConfigModal, setShowMCPConfigModal] = useState(false);
 
@@ -58,26 +74,31 @@ export default function Canvas() {
     name: AvailableAgents.MCP_AGENT,
   });
 
-  const currentlyRunningAgent = getCurrentlyRunningAgent([
+  const agentStates = [
     {
       status: travelAgentRunning,
-      name: travelAgentName,
+      name: travelAgentName || "Travel Agent",
       nodeName: travelAgentNodeName ?? "",
     },
     {
       status: aiResearchAgentRunning,
-      name: aiResearchAgentName,
+      name: aiResearchAgentName || "Research Agent", 
       nodeName: aiResearchAgentNodeName ?? "",
     },
     {
       status: mcpAgentRunning,
-      name: mcpAgentName,
+      name: mcpAgentName || "MCP Agent",
       nodeName: mcpAgentNodeName ?? "",
     },
-  ]);
+  ];
+
+  const currentlyRunningAgent = getCurrentlyRunningAgent(agentStates);
 
   return (
     <div className="relative h-full w-full grid grid-cols-1 md:grid-cols-12">
+      {/* Debug Panel - Always visible */}
+      <AgentDebugPanel agents={agentStates} />
+      
       {currentlyRunningAgent?.status ? (
         <div className="absolute top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-full shadow-lg animate-pulse z-[9999]">
           <span className="font-bold">

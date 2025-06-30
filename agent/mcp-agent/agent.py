@@ -48,6 +48,12 @@ DEFAULT_MCP_CONFIG: MCPConfig = {
         "args": [os.path.join(os.path.dirname(__file__), "..", "math_server.py")],
         "transport": "stdio",
     },
+    "weather": {
+        "command": "python",
+        # Add weather server to default configuration
+        "args": [os.path.join(os.path.dirname(__file__), "..", "weather_server.py")],
+        "transport": "stdio",
+    },
 }
 
 # Define a custom ReAct prompt that encourages the use of multiple tools
