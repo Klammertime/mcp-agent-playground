@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+"""
+MCP Server Management Utility
+
+Usage:
+  ./mcp start    - Start all servers
+  ./mcp stop     - Stop all servers  
+  ./mcp status   - Check server status
+  ./mcp restart  - Restart all servers
+"""
+
+import sys
+import subprocess
+import os
+from pathlib import Path
+
+def run_script(script_name):
+    """Run a management script"""
+    script_path = Path(__file__).parent / script_name
+    if script_path.exists():
+        subprocess.run(["poetry", "run", "python", str(script_path)])
+    else:
+        print(f"❌ Script {script_name} not found")
+
+def main():
+    if len(sys.argv) != 2:
+        print("MCP Server Management")
+        print("Usage:")
+        print("  poetry run python mcp start    - Start all servers")
+        print("  poetry run python mcp stop     - Stop all servers")
+        print("  poetry run python mcp status   - Check server status")
+        print("  poetry run python mcp restart  - Restart all servers")
+        sys.exit(1)
+    
+    command = sys.argv[1].lower()
+    
+    if command == "start":
+        run_script("start_servers.py")
+    elif command == "stop":
+        run_script("stop_servers.py")
+    elif command == "status" or command == "check":
+        run_script("check_servers.py")
+    elif command == "restart":
+        print("🔄 Restarting MCP servers...")
+        run_script("stop_servers.py")
+        print()
+        run_script("start_servers.py")
+    else:
+        print(f"❌ Unknown command: {command}")
+        print("Available commands: start, stop, status, restart")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main() 
